@@ -31,4 +31,28 @@ export async function uploadFile(file) {
   }
 
   return await response.json();
+} 
+
+
+export async function fetchDocuments() {
+  const response = await fetch(`${API_BASE_URL}/documents`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch documents');
+  }
+
+  const data = await response.json();
+  return data.documents;
+}
+
+export async function deleteDocument(fileName) {
+  const response = await fetch(`${API_BASE_URL}/documents/${encodeURIComponent(fileName)}`, {
+    method: 'DELETE'
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to delete document');
+  }
+
+  return await response.json();
 }

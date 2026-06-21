@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import chatRoutes from './routes/chat.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
+import documentsRoutes from './routes/documents.routes.js';
 
 const app = express();
 
@@ -14,5 +15,6 @@ app.get('/health', (req, res) => {
 
 app.use('/api', chatRoutes);
 app.use('/api', uploadRoutes);
+app.use('/api', documentsRoutes);
 
 export default app;

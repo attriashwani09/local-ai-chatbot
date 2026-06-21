@@ -48,4 +48,41 @@ export async function searchSimilarChunks(queryVector, limit = 5) {
     .toArray();
 
   return results;
+} 
+
+export async function listDocuments() {
+  const table = await getOrCreateTable();
+
+  if (!table) {
+    return [];
+  }
+
+  const allRows = await table.query().toArray();
+
+  const documentMap = {};
+  for (const row of allRows) {
+    const name = row.fileName;
+    if (!documentMap[name]) {
+      documentMap[name] = 0;
+    }
+    documentMap[name] += 1;
+  }
+
+  return Object.entries(documentMap).map(([fileName, chunkCount]) => ({
+    fileName,
+    chunkCount
+  }));
+}
+
+export async function deleteDocumentChunks(fileName) {
+  const table = await getOrCreateTable();
+
+  if (!table) {
+    return { deleted: false, reason: 'No documents exist yet' };
+  }
+
+  const escapedFileName = fileName.replace(/'/g, "''");
+  await table.delete(`fileName = '${escapedFileName}'`);
+
+  return { deleted: true };
 }
