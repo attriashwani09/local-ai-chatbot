@@ -23,7 +23,7 @@ function ChatWindow({ messages, isLoading, onSend }) {
         )}
 
         {messages.map((msg, index) => (
-          <MessageBubble key={index} role={msg.role} text={msg.text} />
+          <MessageBubble key={index} role={msg.role} text={msg.text} sources={msg.sources} />
         ))}
 
         {isLoading && (

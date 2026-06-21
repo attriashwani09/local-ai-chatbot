@@ -13,11 +13,11 @@ export function useChat() {
     setIsLoading(true);
 
     try {
-      const replyText = await sendMessage(userText);
-      const botMessage = { role: 'bot', text: replyText };
+      const { reply, sources } = await sendMessage(userText);
+      const botMessage = { role: 'bot', text: reply, sources };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
-      const errorMessage = { role: 'bot', text: 'Error: could not reach the server.' };
+      const errorMessage = { role: 'bot', text: 'Error: could not reach the server.', sources: [] };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
