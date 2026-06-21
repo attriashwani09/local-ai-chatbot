@@ -13,4 +13,22 @@ export async function sendMessage(message) {
 
   const data = await response.json();
   return data.reply;
+} 
+
+
+export async function uploadFile(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/upload`, {
+    method: 'POST',
+    body: formData
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Upload failed');
+  }
+
+  return await response.json();
 }
