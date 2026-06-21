@@ -1,5 +1,6 @@
 import express from 'express';
-import { askOllama } from '../services/llm.service.js';
+import { askOllama, buildConstrainedPrompt } from '../services/llm.service.js';
+import { retrieveRelevantChunks } from '../services/retrieval.service.js';
 
 const router = express.Router();
 
@@ -11,9 +12,21 @@ router.post('/chat', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    const reply = await askOllama(message);
+    const relevantChunks = await retrieveRelevantChunks(message);
 
-    res.json({ reply });
+    if (relevantChunks.length === 0) {
+      return res.json({ reply: 'Data not available.', sources: [] });
+    }
+
+    const prompt = buildConstrainedPrompt(message, relevantChunks);
+    const reply = await askOllama(prompt);
+
+    const sources = relevantChunks.map((chunk) => ({
+      fileName: chunk.fileName,
+      chunkIndex: chunk.chunkIndex
+    }));
+
+    res.json({ reply, sources });
   } catch (error) {
     console.error('Chat route error:', error.message);
     res.status(500).json({ error: 'Something went wrong while talking to the AI model' });

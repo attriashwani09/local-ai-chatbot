@@ -18,3 +18,20 @@ export async function askOllama(promptText) {
   const data = await response.json();
   return data.response;
 }
+
+export function buildConstrainedPrompt(question, contextChunks) {
+  const contextText = contextChunks
+    .map((chunk, i) => `[${i + 1}] ${chunk.text}`)
+    .join('\n\n');
+
+  return `You must answer ONLY using the provided context below.
+If the answer is not contained in the context, respond with exactly: "Data not available."
+Do not use any prior knowledge. Do not guess. Do not make assumptions beyond what is written.
+
+Context:
+${contextText}
+
+Question: ${question}
+
+Answer:`;
+}
